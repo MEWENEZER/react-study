@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { IProduct } from '../models';
+import React, { useState, useCallback } from 'react';
+import { ProductType } from '../models';
+import { Button } from './Button';
+import { ProductPrice } from './ProductPrice';
 
 interface ProductProps {
-  product: IProduct;
+  product: ProductType;
 }
 
 function Product({ product }: ProductProps) {
-  const [details, setDetails] = useState(false); // Видимость Описания по умолчанию - Скрыто
+  // Hook
+  const [detailsIsVisible, setDetailsIsVisible] = useState(false); // Видимость Описания по умолчанию - Скрыто
+
+  const toggleDetailsVisibility = useCallback(
+    () => setDetailsIsVisible((prevState) => !prevState),
+    []
+  );
 
   return (
     <div className="flex flex-col self-start gap-2 items-center max-w-xs border py-2 px-4 rounded">
@@ -15,20 +23,16 @@ function Product({ product }: ProductProps) {
         src={product.image}
         alt={product.title}
       />
+
       <h3 className="text-xl font-medium">{product.title}</h3>
-      <p className="font-bold text-green-700">
-        {product.price}
-        {`\u0024`}
-      </p>
 
-      <button
-        className="py-2 px-4 border rounded-md bg-blue-400 text-white"
-        onClick={() => setDetails((prev) => !prev)}
-      >
-        {details ? 'Hide Details' : 'Show Details'}
-      </button>
+      <ProductPrice price={product.price} />
 
-      {details && (
+      <Button onClick={toggleDetailsVisibility}>
+        {detailsIsVisible ? 'Hide' : 'Show'}
+      </Button>
+
+      {detailsIsVisible && (
         <div>
           <p> {product.description} </p>
         </div>
